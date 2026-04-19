@@ -25,7 +25,17 @@ function toggleSign() {
 
 function calculate() {
     try {
-        display.value = eval(display.value);
+        let expression = display.value;
+        let result = eval(expression);
+
+        display.value = result;
+
+        // simpan ke history
+        let historyList = document.getElementById("historyList");
+        let li = document.createElement("li");
+        li.innerText = expression + " = " + result;
+        historyList.prepend(li);
+
     } catch {
         display.value = "Error";
     }
@@ -69,67 +79,49 @@ function processNLP() {
     }
 
     // =====================
-    // TOKEN
+    // KONVERSI OPERATOR
     // =====================
-    let tokens = input.split(" ").filter(t => t !== "");
-
-    let hasil = null;
-    let operasi = null;
-
-    // fungsi operator (STRICT)
-    function getOp(word) {
-        if (word === "tambah" || word === "ditambah" || word === "beli") return "+";
-        if (word === "kurang" || word === "dikurang" || word === "dimakan") return "-";
-        if (word === "kali" || word === "dikali") return "*";
-        if (word === "bagi" || word === "dibagi") return "/";
-        return null;
-    }
+    input = input
+        .replace(/tambah|plus|beli|dapat/g, "+")
+        .replace(/kurang|minus|hilang|dimakan/g, "-")
+        .replace(/kali|dikali|x/g, "*")
+        .replace(/bagi|dibagi/g, "/");
 
     // =====================
-    // PARSING (AMAN)
+    // AMBIL HANYA ANGKA & OPERATOR
     // =====================
-    for (let i = 0; i < tokens.length; i++) {
-        let word = tokens[i];
+    let ekspresi = input.replace(/[^0-9+\-*/.]/g, "");
 
-        // angka
-        if (!isNaN(word)) {
-            let num = parseFloat(word);
-
-            if (hasil === null) {
-                hasil = num;
-            } else if (operasi !== null) {
-                if (operasi === "+") hasil += num;
-                else if (operasi === "-") hasil -= num;
-                else if (operasi === "*") hasil *= num;
-                else if (operasi === "/") hasil /= num;
-
-                operasi = null; // reset
-            }
-        }
-
-        // operator
-        let op = getOp(word);
-        if (op !== null) {
-            operasi = op;
-        }
-    }
-
-    // =====================
-    // DETEKSI OBJEK
-    // =====================
-    let benda = "";
-    for (let word of tokens) {
-        if (isNaN(word) && !getOp(word) && word.length > 2) {
-            benda = word;
-        }
-    }
-
-    // =====================
-    // OUTPUT
-    // =====================
-    if (hasil !== null) {
-        output.innerText = benda ? hasil + " " + benda : hasil;
-    } else {
+    try {
+        let hasil = eval(ekspresi);
+        output.innerText = hasil;
+    } catch {
         output.innerText = "Tidak mengerti";
     }
+}
+
+function clearHistory() {
+    document.getElementById("historyList").innerHTML = "";
+}
+
+function startVoice() {
+    if (!('webkitSpeechRecognition' in window)) {
+        alert("Browser tidak mendukung voice input");
+        return;
+    }
+
+    let recognition = new webkitSpeechRecognition();
+    recognition.lang = "id-ID"; // Bahasa Indonesia
+    recognition.start();
+
+    recognition.onresult = function(event) {
+        let hasil = event.results[0][0].transcript;
+
+        // tampilkan ke input
+        document.getElementById("nlpInput").value = hasil;
+    };
+
+    recognition.onerror = function() {
+        alert("Gagal mendeteksi suara");
+    };
 }

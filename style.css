@@ -102,3 +102,32 @@ button:active {
     color: white;
     margin-top: 10px;
 }
+
+.history {
+    margin-top: 20px;
+    color: white;
+}
+
+.history ul {
+    list-style: none;
+    padding: 0;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.history li {
+    padding: 5px;
+    border-bottom: 1px solid #444;
+    font-size: 0.9rem;
+}
+
+.history button {
+    width: 100%;
+    margin-bottom: 10px;
+    height: 35px;
+    border-radius: 8px;
+    border: none;
+    background: #5f6b7a;
+    color: white;
+    cursor: pointer;
+}

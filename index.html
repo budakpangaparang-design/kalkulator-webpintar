@@ -10,6 +10,9 @@
 
 <div class="calculator">
     <h2>Kalkulator Web Pintar</h2>
+    <h3 style="color:white; text-align:center;">
+    Kalkulator Web Pintar dengan NLP Sederhana
+</h3>
 
     <input type="text" id="display" disabled>
 
@@ -44,8 +47,14 @@
     <div class="nlp">
         <input type="text" id="nlpInput" placeholder="Tanya soal cerita...">
         <button onclick="processNLP()">Tanya</button>
+        <button onclick="startVoice()">🎤 Bicara</button>
         <p id="nlpResult"></p>
     </div>
+    <div class="history">
+    <h4>History</h4>
+    <button onclick="clearHistory()">Hapus History</button>
+    <ul id="historyList"></ul>
+</div>
 </div>
 
 <script src="script.js"></script>
